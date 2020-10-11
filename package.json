@@ -1,0 +1,21 @@
+{
+  "name": "@grunmouse/jsverify-env",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsverify": "^0.8.4",
+    "typify-parser": "^1.1.0",
+    "underscore": "^1.11.0"
+  },
+  "devDependencies": {
+    "lazy-seq": "^1.0.0",
+    "sinon": "^9.2.0",
+    "trampa": "^1.0.1"
+  }
+}

@@ -1,0 +1,39 @@
+Функции вызываются друг за другом хвостовой рекурсией. Асинхронность игнорируется
+Знак -> обозначает использование результата в другой функции
+
+forall(...gens, env?, property)
+forall.anonimus(size)
+forall.test(size = size, x = gens.map(...), shrinks = 0)
+property(...x)->forall.test.anonimus(r, exc)
+{
+	r === true ||
+	r.call && forall.test.anonimus.anonimus(rRecPrime = r(size)){
+		r===true ||
+		shrinkResult(gens, x, test, size, shrinks, exc, forall.test.anonimus.anonimus.resultHandler)
+	} ||
+	shrinkResult(gens, x, test, size, shrinks, exc || r, utils.identity)
+}
+
+
+//
+
+shrinkResult(arbs, x, test, size, shrinksN, exc, transform)
+
+  var shrinks = utils.pluck(arbs, "shrink");
+  var shows = utils.pluck(arbs, "show");
+
+  var shrinked = shrink.tuple(shrinks, x);
+
+  var shrinkP = lazyseq.fold(shrinked, true, function (y, rest) {
+      var t = test(size, y, shrinksN + 1);
+      return t !== true ? t : rest();
+  });
+
+shrinkResult.anonimus(shrinkPPrime = shrinkP){
+    if (shrinkPPrime === true) {
+      return transform({counterexample: x, counterexamplestr: show.tuple(shows, x), shrinks: shrinksN, exc: exc});
+    } 
+	else {
+      return shrinkPPrime;
+    }
+}

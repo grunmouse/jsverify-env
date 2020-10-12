@@ -70,5 +70,9 @@ const sizedArray = (len, arb)=>{
 };
 
 module.exports = {
+	utils:{
+		transposeArrays,
+		repeateItems
+	},
 	szarray: sizedArray
 };

@@ -33,6 +33,6 @@ function preparedForAll(prev, ...args){
 		
 		return prop(size);
 	}
-};
+}
 
 module.exports = preparedForAll;

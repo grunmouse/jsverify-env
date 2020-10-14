@@ -1,35 +1,62 @@
 const jsc = require("jsverify");
+const {
+	transposeArrays,
+	repeateItems
+} = require('./array-utils.js');
+const {
+	identOf,
+	generationSettingsOf
+} = require('./arb-utils.js');
 
-/**
- * Транспонировать массив массивов, полагая, что они одной длины
- */
-function transposeArrays(data){
-	let m = data.length, n = data[0].length;
-	let result = Array.from({length:n}, ()=>([]));
+const {
+	uint32ToFloat,
+	expandFloat,
 	
-	for(let i = 0; i<n; ++i){
-		for(let j = 0; j<m; j++){
-			result[i][j] = data[j][i];
-		}
+	ensureIntegerArgs,
+	ensureFloatArgs,
+	
+	integer,
+	
+	uniqueRandomInt
+} = require('./random.js');
+
+
+const increasingSorter = (a,b)=>(+(b>a)-(a>b));
+const decreasingSorter = (a,b)=>(+(b<a)-(a<b));
+const same = (x)=>(x);
+
+/***
+ * Композиция целого числа
+ */
+const composition = (len, value)=>{
+	if(len === 1){
+		return [value];
+	}
+	else if(len === 2){
+		let a = integer(1, value-1);
+		return [a, value-a];
+	}
+	
+	let pos = uniqueRandomInt(len-1, 1, value-1).sort(increasingSort);
+	pos.unshift(0);
+	pos.push(value);
+	
+	let result = [];
+	for(let i=0; i<len; ++i){
+		result[i] = pos[i+1] + pos[i];
 	}
 	
 	return result;
 }
 
-/**
- * Удлинить массив до заданного значения, размножая его элементы, но сохраняя порядок
- */
-function repeateItems(arr, nlen){
-	let len = arr.length;
-	if(len === nlen){
-		return arr;
-	}
-	let mul = nlen/len;
+const copmosition0 = (len, value)=>{
+	let pos = uniqueRandomInt(len+1, 0, value).sort(increasingSort);
+
 	let result = [];
-	for(let i=0; i<nlen; ++i){
-		let k = Math.floor(i/mul);
-		result[i] = arr[k];
+	for(let i=0; i<len; ++i){
+		result[i] = pos[i+1] + pos[i];
 	}
+	
 	return result;
 }
 
@@ -69,10 +96,87 @@ const sizedArray = (len, arb)=>{
 	});
 };
 
+const uniqueArray = (len, arb)=>{
+	if(!arb){
+		arb = len;
+		len = jsc.nat;
+	}
+	let [a, b, conv] = generationSettingsOf(arb);
+	
+	return jsc.bless({
+		generator:()=>{
+			let l = typeof len === 'number' ? len : len.generator(size);
+			let values = uniqueRandomInt(l, a, b);
+			let result = values.map(conv);
+			return result;
+		}
+	});
+};
+
+
+const increasingArray = (len, arb)=>{
+	return uniqueArray(len, arb).smap((arr)=>(arr.sort(increasingSorter)), same);
+};
+
+const decreasingArray = (len, arb)=>{
+	return uniqueArray(len, arb).smap((arr)=>(arr.sort(decreasingSorter)), same);
+};
+
+const nonincreasingArray = (len, arb)=>{
+	return sizedArray(len, arb).smap((arr)=>(arr.sort(decreasingSorter)), same);
+};
+
+const nondecreasingArray = (len, arb)=>{
+	return sizedArray(len, arb).smap((arr)=>(arr.sort(increasingSorter)), same);
+};
+
+function oscill(n, m, a, b, invert){
+	if(typeof a === 'boolean'){
+		invert = a;
+		a = 0;
+		b = undefined;
+	}
+	else if(typeof b === 'boolean'){
+		invert = b;
+		b = undefined;
+	}
+	
+	let ext = uniqueRandomInt(m, 1, n).sort(increaseSort);
+	ext.unshift(0);
+	
+	let result = [];
+	
+	let prev = invert ? b : a;
+	for(let i = 0; i<m; ++i){
+		let count = ext[i+1] - ext[i];
+		if(!(i & 1) === invert){
+			//Убывающий участок
+			let part = uniqueRandomInt(count, a, prev).sort(decreaseSort);
+			result[i] = part;
+			prev = part[part.length - 1] + 1;
+		}
+		else{
+			//Возрастающий участок
+			let part = uniqueRandomInt(count, prev, b).sort(increaseSort);
+			result[i] = part;
+			prev = part[part.length - 1] - 1;
+		}
+	}
+	
+	return [].concat(...result);
+}
+
+
+
 module.exports = {
 	utils:{
 		transposeArrays,
 		repeateItems
 	},
-	szarray: sizedArray
+	szarray: sizedArray,
+	uarray: uniqueArray
+	incarray: increasingArray,
+	decarray: decreasingArray,
+	nincarray: nonincreasingArray,
+	ndecarray: nondecreasingArray
 };

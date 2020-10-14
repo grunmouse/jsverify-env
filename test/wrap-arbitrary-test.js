@@ -27,7 +27,7 @@ describe("primitive arbitraries", function () {
   });
 
   describe("wrap integer", function () {
-	  const wrapped = wrap(jsc.integer);
+    const wrapped = wrap(jsc.integer);
     it("use without args", function () {
 	  let arb = wrapped();
 	  assert.equal(arb.factory, jsc.integer, 'factory');

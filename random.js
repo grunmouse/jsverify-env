@@ -33,13 +33,41 @@ const biginteger = (a,b)=>(BigInt(random.integer(Number(a),Number(b))));
 
 const randomUInt32 = ()=>(random.integer(0, MASK32));
 
-function randomUInt(a, b){
-	if(b == undefined){
+function ensureIntegerArgs(a, b){
+	if(typeof b == 'undefined'){
 		b = a;
 		a = 0;
+		if(typeof b == 'undefined'){
+			b = MASK32;
+		}
 	}
-	a = a || 0;
-	b = b || MASK32;
+	
+	return [a, b];
+}
+
+function ensureFloatArgs(a, b){
+	if(typeof b == 'undefined'){
+		b = a;
+		a = 0;
+		if(typeof b == 'undefined'){
+			b = 1;
+		}
+	}
+
+	return [a, b];
+}
+
+function ensureFloatLim(opendown, openup){
+	opendown = (opendown === true);
+	openup = (openup !== false);
+	
+	return [opendown, openup];
+}
+
+function randomUInt(a, b){
+	
+	[a, b] = ensureIntegerArgs(a, b);
+
 	return random.integer(a, b);
 }
 
@@ -149,12 +177,7 @@ class PermutatedTail extends Map{
 function uniqueRandomInt(n, a, b){
 	let tail = new PermutatedTail();
 	
-	if(!b){
-		b = a;
-		a = 0;
-	}
-	a = a || 0;
-	b = b || MASK32;
+	[a, b] = ensureIntegerArgs(a, b);
 	
 	let result = [];
 	for(let i = 0; i<n; ++i){
@@ -201,6 +224,10 @@ module.exports = {
 	
 	uint32ToFloat,
 	expandFloat,
+	
+	ensureIntegerArgs,
+	ensureFloatArgs,
+	ensureFloatLim,
 	
 	uniqueRandomInt
 	

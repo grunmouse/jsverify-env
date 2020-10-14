@@ -25,7 +25,7 @@ const {
  * @return Array<Int32> - возрастает
  */
 function monoton(n, a, b){
-	let arr = uint32ToFloat(n, a, b);
+	let arr = uniqueRandomInt(n, a, b);
 	
 	arr.sort((a,b)=>(a-b));
 	

@@ -66,7 +66,7 @@ const sizedArray = (len, arb)=>{
 			return result;
 		},
 		show:jsc.show.array(arb.show)
-	})
+	});
 };
 
 module.exports = {

@@ -17,7 +17,8 @@ const {
 	
 	integer,
 	
-	uniqueRandomInt
+	uniqueRandomInt,
+	uniqueAnyRandom
 } = require('./random.js');
 
 
@@ -101,16 +102,19 @@ const uniqueArray = (len, arb)=>{
 		arb = len;
 		len = jsc.nat;
 	}
-	let [a, b, conv] = generationSettingsOf(arb);
+	const {pregen, conv} = generationSettingsOf(arb);
 	
-	return jsc.bless({
-		generator:()=>{
+	let res = jsc.bless({
+		generator:(size)=>{
 			let l = typeof len === 'number' ? len : len.generator(size);
-			let values = uniqueRandomInt(l, a, b);
+			let values = uniqueAnyRandom(l, pregen);
 			let result = values.map(conv);
 			return result;
 		}
 	});
+	
+	return res;
+
 };
 
 
@@ -174,7 +178,7 @@ module.exports = {
 		repeateItems
 	},
 	szarray: sizedArray,
-	uarray: uniqueArray
+	uarray: uniqueArray,
 	incarray: increasingArray,
 	decarray: decreasingArray,
 	nincarray: nonincreasingArray,

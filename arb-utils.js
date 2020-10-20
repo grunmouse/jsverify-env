@@ -4,7 +4,10 @@ const {
 	ensureFloatLim,
 	
 	expandFloat,
-	uint32ToFloat
+	uint32ToFloat,
+	uint32ToInt,
+	
+	randomUInt32
 } = require('./random.js');
 
 const jsc = require('jsverify');
@@ -17,6 +20,14 @@ const arbNames = new Map(
 function uintToElement(elements){
 	const len = elements.length;
 	return (intval)=>(elements[intval % len]);
+}
+
+function extendWithDefault(arb) {
+  var def = arb();
+  arb.generator = def.generator;
+  arb.shrink = def.shrink;
+  arb.show = def.show;
+  arb.smap = def.smap;
 }
 
 /***
@@ -36,8 +47,10 @@ function wrapArbitrary(factory, name){
 			arb.args = args;
 			return arb;
 		};
+		extendWithDefault(fun);
 		
 		fun.based = factory;
+		
 		
 		return fun;
 	}
@@ -56,6 +69,9 @@ function wrapSelf(factory, name){
 			arb.args = args;
 			return arb;
 		};
+		
+		extendWithDefault(fun);
+		
 		fun.based = factory;
 		arbNames.set(fun, name);
 		return fun;
@@ -70,20 +86,21 @@ function wrapSelf(factory, name){
  * Опознаёт arbitrary
  */
 function identOf(arb){
-	if(arb.factory){
-		let name = arb.name || arbNames.get(arb.factory);
-		return {
-			name:name,
-			args:arb.args
-		};
-	}
-	else{
-		let name = arbNames.get(arb);
-		return {
-			name:name,
-			isConst:true
-		};
-	}
+	let factory = arb.factory || arb.based || typeof arb === 'function' && arb;
+	
+	let args = arb.args || [];
+	
+	let name = typeof arb !== 'function' && arb.name || factory && arbNames.get(factory) || arbNames.get(arb);
+
+	let {pregen, conv} = factory && factory.getConv && factory.getConv(arb.args) || arb;
+	
+	return {
+		name:name,
+		args:args,
+		pregen:pregen,
+		conv:conv
+	};
+	
 }
 
 const combine = (a, b)=>((x)=>(b(a(x))));
@@ -97,49 +114,54 @@ const combine = (a, b)=>((x)=>(b(a(x))));
 function generationSettingsOf(arb){
 	const ident = identOf(arb);
 	
-	let a, b, conv = (a)=>(a);;
+	if(ident.conv && ident.conv){
+		return ident;
+	}
+	
+	let pregen = randomUInt32, conv = (a)=>(a);
 	
 	switch(ident.name){
 		case "integer":
 		case "nat":
 		{
-			[a, b] = ensureIntegerArgs(...ident.args);
+			let args = ensureIntegerArgs(...ident.args);
+			let [a, b] = args;
+			conv = uint32ToInt(a, b);
 			break;
 		}
 		case "int8":
 		{
-			a = -128; b = 127;
+			conv = uint32ToInt(-0x80, 0x7F);
 			break;
 		}
 		case "int16":
 		{
-			a = -0x8000; b = 0x7FFF;
+			conv = uint32ToInt(-0x8000, 0x7FFF);
 			break;
 		}
 		case "int32":
 		{
-			a = -0x80000000; b = 0x7FFFFFFF;
+			conv = uint32ToInt(-0x80000000, 0x7FFFFFFF);
 			break;
 		}
 		case "uint8":
 		{
-			a = 0; b = 256;
+			conv = uint32ToInt(0, 0xFF);
 			break;
 		}
 		case "uint16":
 		{
-			a = 0; b = 0xFFFF;
+			conv = uint32ToInt(0, 0xFFFF);
 			break;
 		}
 		case "uint32":
 		{
-			a = 0; b = 0xFFFFFFFF;
+			conv = uint32ToInt(0, 0xFFFFFFFF);
 			break;
 		}
 		case "number":
 		{
 			let limits = ensureFloatArgs(...ident.args);
-			a = 0; b = 0xFFFFFFFF;
 			
 			conv = combine(uint32ToFloat(), expandFloat(...limits));
 			break;
@@ -147,33 +169,36 @@ function generationSettingsOf(arb){
 		case "elements":
 		{
 			const elements = ident.args[0];
-			a = 0; b = elements.length - 1;
-			
-			conv = (intval)=>(elements[intval]);
+			const toLimit = uint32ToInt(0, elements.length - 1);
+			conv = (intval)=>(elements[toLimit(intval)]);
 			break;
 		}
 		case "bool":
 		{
-			a = 0; b = 1;
+			pregen = ()=>(randomUInt(0,1));
 			conv = (intval)=>(!!intval);
 			break;
 		}
 		case "falsy":{
 			const elements = [false, null, undefined, "", 0, NaN];
-			a = 0; b = 5;
 
-			conv = (intval)=>(elements[intval]);
+			const toLimit = uint32ToInt(0, 5);
+			conv = (intval)=>(elements[toLimit(intval)]);
+
 			break;
 		}
 		case "constant":
 		{
 			const val = ident.args[0];
-			a = 0; b = 0;
+			
+			pregen = ()=>(0);
+			
 			conv = ()=>(val);
 			break;
 		}
 		case "datetime":
 		{
+			let a,b;
 			if(ident.args.length === 2){
 				[a,b] = ident.args.map((date)=>(date.valueOf()));
 			}
@@ -181,34 +206,19 @@ function generationSettingsOf(arb){
 				a = 1416499879495; //jsverify legacy
 				b = 1416499879495+768000000; //jsverify legacy
 			}
-			conv = (val)=>(new Date(val));
+			const toLimit = uint32ToInt(a, b);
+			conv = (intval)=>(new Date(toLimit(intval)));
 			break;
 		}
-		//New primitives
-		case "close":
+
+		default:
 		{
-			let limits = ensureFloatArgs(...ident.args);
-			[a, b] = ensureIntegerArgs();
-			conv = combine(uint32ToFloat(false, false), expandFloat(...limits));
-			break;
+			throw new Error('Arbitrary is not decomposable');
 		}
-		case "open":
-		{
-			let limits = ensureFloatArgs(...ident.args);
-			[a, b] = ensureIntegerArgs();
-			conv = combine(uint32ToFloat(true, true), expandFloat(...limits));
-			break;
-		}
-		case "openbottom":
-		{
-			let limits = ensureFloatArgs(...ident.args);
-			[a, b] = ensureIntegerArgs();
-			conv = combine(uint32ToFloat(true, false), expandFloat(...limits));
-			break;
-		}
+		
 	}
 	
-	return {a, b, conv};
+	return {pregen, conv};
 }
 
 

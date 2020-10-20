@@ -28,11 +28,15 @@ const bigintMask = (size)=>((1n<<BigInt(size))-1n);
 const MASK32 = 0xFFFFFFFF; //Часто встречается
 const MASK20 = 0xFFFFF;
 const OVER32 = MASK32+1;
+const BMASK32 = 0xFFFFFFFFn;
 
 const biginteger = (a,b)=>(BigInt(random.integer(Number(a),Number(b))));
 
 const randomUInt32 = ()=>(random.integer(0, MASK32));
 
+/***
+ * Исправляет верхний и нижний целый предел
+ */
 function ensureIntegerArgs(a, b){
 	if(typeof b == 'undefined'){
 		b = a;
@@ -45,6 +49,9 @@ function ensureIntegerArgs(a, b){
 	return [a, b];
 }
 
+/***
+ * Исправляет верхний и нижний числовой предел
+ */
 function ensureFloatArgs(a, b){
 	if(typeof b == 'undefined'){
 		b = a;
@@ -57,6 +64,9 @@ function ensureFloatArgs(a, b){
 	return [a, b];
 }
 
+/***
+ * Исправляет статус включения верхнего и нижнего пределов
+ */
 function ensureFloatLim(opendown, openup){
 	opendown = (opendown === true);
 	openup = (openup !== false);
@@ -74,7 +84,7 @@ function randomUInt(a, b){
 function randomBigUInt(len){
 	len = BigInt(len);
 	let parts = len / 32n; //Деление целочисленное, это очень удобно
-	let head = len % 32;
+	let head = len % 32n;
 	
 	let result = head && bigniteger(0, bigintMask(head));
 	
@@ -101,7 +111,7 @@ function uint32ToFloat(opendown, openup){
 	const a = 0 + opendown;
 	const d = MASK32 + openup + a;
 
-	return (intval)=>((a+intval)/d);
+	return (intval)=>((a + intval)/d);
 }
 
 /***
@@ -111,7 +121,17 @@ function uint32ToFloat(opendown, openup){
  * @return Function<number, number> - преобразует число из отрезка [0;1] в отрезок [a;b]
  */
 function expandFloat(a, b){
+	[a,b] = ensureFloatArgs(a, b);
 	return (value)=>(a + value*(b-a));
+}
+
+function uint32ToInt(a, b){
+	[a, b] = ensureIntegerArgs(a, b);
+	
+	let toFloat = uint32ToFloat();
+	let expand = expandFloat(a, b+1);
+	
+	return (intval)=>(Math.floor(expand(toFloat(intval))));
 }
 
 /***
@@ -150,9 +170,14 @@ const opendownFloat = makerFloat(uint32ToFloat(true, false));
 
 
 /***
- * Представляет собой числовой массив, в котором переставлены числа
+ * Представляет собой упорядоченное множество целых неотрицательных чисел, которые
+ * первоначально стоят по порядку, под индексами, равными значению,
+ * но их можно обменивать местами методом
  */
 class PermutatedTail extends Map{
+	/**
+	 * Метод получения числа по индексу
+	 */
 	get(index){
 		if(this.has(index)){
 			return super.get(index);
@@ -162,6 +187,11 @@ class PermutatedTail extends Map{
 		}
 	}
 	
+	/**
+	 * Метод обмена позиций во множестве значениями
+	 * @param a - индекс первого числа
+	 * @param b - индекс второго числа
+	 */
 	swap(a, b){
 		let A = this.get(a);
 		let B = this.get(b);
@@ -190,17 +220,13 @@ function uniqueRandomInt(n, a, b){
 	return result;
 }
 
-function uniqueRandomBigInt(n, a, b){
+function uniqueRandomBigInt(n, len){
 	let tail = new PermutatedTail();
-	
-	if(!b){
-		b = a;
-		a = 0;
-	}
-	
+
 	let result = [];
+	let a = 0n;
 	for(let i = 0; i<n; ++i){
-		let k = random.integer(a, b);
+		let k = randomBigUInt(len);
 		result.push(tail.get(k));
 		tail.swap(k, a);
 		++a;
@@ -209,12 +235,47 @@ function uniqueRandomBigInt(n, a, b){
 	return result;
 }
 
+function uniqueAnyRandom(n, gen){
+	let tail = new PermutatedTail();
+
+	let result = [];
+	for(let i = 0; i<n; ++i){
+		let k = gen();
+		result.push(tail.get(k));
+		let alt = typeof k === 'biginy' ? BigInt(i) : i;
+		tail.swap(k, alt);
+	}
+	
+	return result;
+}
+
+
+function uniqueRandomIntPoints(n, d){
+	let len = 32*d;
+	let data = uniqueRandomBigInt(n, len);
+	
+	let points = data.map((val)=>{
+		let p = new Array(d);
+		for(i=0n; i<d; ++i){
+			let shift = 32n*d;
+			p[i] = Number((value >> shift) & BMASK32);
+		}
+		return p;
+	});
+	
+	return points;
+}
+
+const randomBigUInt32 = ()=>(BigInt(randomUInt32()));
 
 module.exports = {
 	integer:randomUInt,
 	randomUInt32,
 	randomUInt52,
+	
+	randomBigUInt32,
 	randomBigUInt64,
+	
 	randomBigUInt,
 	
 	closeFloat,
@@ -224,11 +285,15 @@ module.exports = {
 	
 	uint32ToFloat,
 	expandFloat,
+	uint32ToInt,
 	
 	ensureIntegerArgs,
 	ensureFloatArgs,
 	ensureFloatLim,
 	
-	uniqueRandomInt
+	uniqueRandomInt,
+	uniqueRandomBigInt,
+	uniqueAnyRandom,
+	uniqueRandomIntPoints
 	
 };

@@ -2,6 +2,8 @@ const jsc = require('jsverify');
 const random = require('./random.js');
 const {libwrap} = require('./arb-utils.js');
 
+const combine = (a, b)=>((x)=>(b(a(x))));
+
 const uint52 = ()=>jsc.bless({
 	generator:()=>{
 		return random.randomUInt52();
@@ -11,17 +13,31 @@ const uint52 = ()=>jsc.bless({
 
 
 const limfloat = (opendown, openup)=>{
-	const conv2 = random.uint32ToFloat(opendown, openup);
+	const toFloat = random.uint32ToFloat(opendown, openup);
+	
+	const pregen = random.randomUInt32;
+	
+	const getConv = (minsize, maxsize)=>(
+		{
+			pregen:pregen,
+			conv:combine(random.expandFloat(minsize, maxsize), toFloat)
+		}
+	);
+	
 	const fun = (minsize, maxzise)=>{
-		const conv1 = random.expandFloat(minsize, maxzise);
+		const conv = getConv(minsize, maxzise);
 		let arb = jsc.bless({
 			generator:()=>{
-				return conv2(conv1(random.randomUInt32()));
+				return conv(pregen());
 			}
 		});
+		arb.conv = conv;
+		arb.pregen = pregen;
 		
 		return arb;
 	}
+	
+	fun.getConv = getConv;
 	
 	return fun;
 };

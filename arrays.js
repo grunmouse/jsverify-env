@@ -15,86 +15,82 @@ const {
 	ensureIntegerArgs,
 	ensureFloatArgs,
 	
-	integer,
+	randomUInt,
 	
-	uniqueRandomInt,
-	uniqueAnyRandom
+	pregenUInt,
+	pregenBigUInt
+	
 } = require('./random.js');
+
+const {
+	uniqueRandomInt,
+	uniqueRandom
+} = require('./unique-random.js');
+
+const bless = require('./bless.js');
 
 
 const increasingSorter = (a,b)=>(+(b>a)-(a>b));
 const decreasingSorter = (a,b)=>(+(b<a)-(a<b));
 const same = (x)=>(x);
 
-/***
- * Композиция целого числа
- */
-const composition = (len, value)=>{
-	if(len === 1){
-		return [value];
-	}
-	else if(len === 2){
-		let a = integer(1, value-1);
-		return [a, value-a];
-	}
-	
-	let pos = uniqueRandomInt(len-1, 1, value-1).sort(increasingSort);
-	pos.unshift(0);
-	pos.push(value);
-	
-	let result = [];
-	for(let i=0; i<len; ++i){
-		result[i] = pos[i+1] + pos[i];
-	}
-	
-	return result;
-}
-
-const copmosition0 = (len, value)=>{
-	let pos = uniqueRandomInt(len+1, 0, value).sort(increasingSort);
-
-	let result = [];
-	for(let i=0; i<len; ++i){
-		result[i] = pos[i+1] + pos[i];
-	}
-	
-	return result;
-}
-
 const sizedArray = (len, arb)=>{
 	if(!arb){
 		arb = len;
 		len = jsc.nat;
 	}
+	let sett = generationSettingsOf(arb);
 	len = jsc.utils.force(len);
+	
 	arb = jsc.utils.force(arb);
 	
-	return jsc.bless({
-		generator:(size)=>{
+	let res = {};
+	if(typeof len === 'number' && sett.pregen){
+		let valueSize = BigInt(sett.pregen.limit)+1n;
+		let limit = valueSize ** BigInt(len) - 1n;;
+		//console.log(limit);
+		const itemConv = sett.pregen.bigint ? sett.conv : (x)=>sett.conv(Number(x));
+		
+		res.pregen = pregenBigUInt(limit);
+		res.conv = (value)=>{
+			let result = [];
+			for(let i = 0; i<len; ++i){
+				result[i] = value % valueSize;
+				value = value / valueSize;
+			}
+			result = result.map(itemConv);
+			return result;
+		}
+	}
+	else{
+		res.generator = (size)=>{
 			let l = typeof len === 'number' ? len : len.generator(size);
 			let result = Array.from({length:l}, ()=>(arb.generator(size)));
 			return result;
-		},
-		shrink:(value)=>{
-			let arrs = value.map((x)=>(arb.shrink(x)));
-			
-			if(arrs.every(a=>(a.length===0))){
-				return [];
-			}
-			
-			arrs = arrs.map((a,i)=>(a.length > 0 ? a : [value[i]]));
+		};
+	}
+	
+	res.shrink = (value)=>{
+		let arrs = value.map((x)=>(arb.shrink(x)));
+		
+		if(arrs.every(a=>(a.length===0))){
+			return [];
+		}
+		
+		arrs = arrs.map((a,i)=>(a.length > 0 ? a : [value[i]]));
 
-			
-			let max = Math.max(...arrs.map((a)=>(a.length)));
-			
-			arrs = arrs.map((arr)=>repeateItems(arr, max));
-			
-			let result = transposeArrays(arrs);
-			
-			return result;
-		},
-		show:jsc.show.array(arb.show)
-	});
+		
+		let max = Math.max(...arrs.map((a)=>(a.length)));
+		
+		arrs = arrs.map((arr)=>repeateItems(arr, max));
+		
+		let result = transposeArrays(arrs);
+		
+		return result;
+	};
+	
+	res.show = jsc.show.array(arb.show)
+	return bless(res);
 };
 
 const uniqueArray = (len, arb)=>{
@@ -102,12 +98,18 @@ const uniqueArray = (len, arb)=>{
 		arb = len;
 		len = jsc.nat;
 	}
+	//arb = jsc.utils.force(arb);
+	//console.log(arb);
 	const {pregen, conv} = generationSettingsOf(arb);
+	if(!pregen || !conv){
+		throw new Error('Arbitrary ' + arb + ' does not support to uniquely!');
+	}
 	
-	let res = jsc.bless({
+	let res = bless({
 		generator:(size)=>{
 			let l = typeof len === 'number' ? len : len.generator(size);
-			let values = uniqueAnyRandom(l, pregen);
+			let values = uniqueRandom(l, pregen);
+			
 			let result = values.map(conv);
 			return result;
 		}
@@ -133,43 +135,6 @@ const nonincreasingArray = (len, arb)=>{
 const nondecreasingArray = (len, arb)=>{
 	return sizedArray(len, arb).smap((arr)=>(arr.sort(increasingSorter)), same);
 };
-
-function oscill(n, m, a, b, invert){
-	if(typeof a === 'boolean'){
-		invert = a;
-		a = 0;
-		b = undefined;
-	}
-	else if(typeof b === 'boolean'){
-		invert = b;
-		b = undefined;
-	}
-	
-	let ext = uniqueRandomInt(m, 1, n).sort(increaseSort);
-	ext.unshift(0);
-	
-	let result = [];
-	
-	let prev = invert ? b : a;
-	for(let i = 0; i<m; ++i){
-		let count = ext[i+1] - ext[i];
-		if(!(i & 1) === invert){
-			//Убывающий участок
-			let part = uniqueRandomInt(count, a, prev).sort(decreaseSort);
-			result[i] = part;
-			prev = part[part.length - 1] + 1;
-		}
-		else{
-			//Возрастающий участок
-			let part = uniqueRandomInt(count, prev, b).sort(increaseSort);
-			result[i] = part;
-			prev = part[part.length - 1] - 1;
-		}
-	}
-	
-	return [].concat(...result);
-}
-
 
 
 module.exports = {

@@ -1,14 +1,18 @@
 const {
+	randomUInt32,
+	randomUInt,
+	pregenUInt
+} = require('./random.js');
+
+const {
 	ensureIntegerArgs,
 	ensureFloatArgs,
 	ensureFloatLim,
 	
 	expandFloat,
 	uint32ToFloat,
-	uint32ToInt,
-	
-	randomUInt32
-} = require('./random.js');
+	offsetInt
+} = require('./convert-value.js');
 
 const jsc = require('jsverify');
 
@@ -17,13 +21,11 @@ const arbNames = new Map(
 	Object.entries(jsc).map(a=>a.reverse())
 );
 
-function uintToElement(elements){
-	const len = elements.length;
-	return (intval)=>(elements[intval % len]);
-}
 
 function extendWithDefault(arb) {
   var def = arb();
+  arb.pregen = def.pregen;
+  arb.conv = def.conv;
   arb.generator = def.generator;
   arb.shrink = def.shrink;
   arb.show = def.show;
@@ -47,7 +49,11 @@ function wrapArbitrary(factory, name){
 			arb.args = args;
 			return arb;
 		};
-		extendWithDefault(fun);
+		try{
+			extendWithDefault(fun);
+		}
+		catch(e){
+		}
 		
 		fun.based = factory;
 		
@@ -86,13 +92,27 @@ function wrapSelf(factory, name){
  * Опознаёт arbitrary
  */
 function identOf(arb){
+	/* 
+		Находим фабрику, она у экзмпляра лежит в factory, у обёртки - в based, 
+		кроме того, на вход могла поступить сама фабрика
+	*/
 	let factory = arb.factory || arb.based || typeof arb === 'function' && arb;
 	
 	let args = arb.args || [];
 	
+	/*
+		У экземпляра должно быть свойство name, в противном случае пробуем искать в базе имён ссылку на 
+		фабрику или на сам экземпляр
+	*/
 	let name = typeof arb !== 'function' && arb.name || factory && arbNames.get(factory) || arbNames.get(arb);
-
-	let {pregen, conv} = factory && factory.getConv && factory.getConv(arb.args) || arb;
+	
+	/*
+		Пробуем получить настройки генерации из экземлпляра или фабрики
+	*/
+	let {pregen, conv} = arb;
+	if((!pregen || !conv) && factory && factory.getSettings){
+		({pregen, conv} = factory.getSettings(arb.args));
+	}
 	
 	return {
 		name:name,
@@ -114,11 +134,11 @@ const combine = (a, b)=>((x)=>(b(a(x))));
 function generationSettingsOf(arb){
 	const ident = identOf(arb);
 	
-	if(ident.conv && ident.conv){
+	if(ident.pregen && ident.conv){
 		return ident;
 	}
 	
-	let pregen = randomUInt32, conv = (a)=>(a);
+	let pregen = pregenUInt(), conv = (a)=>(a);
 	
 	switch(ident.name){
 		case "integer":
@@ -126,37 +146,39 @@ function generationSettingsOf(arb){
 		{
 			let args = ensureIntegerArgs(...ident.args);
 			let [a, b] = args;
-			conv = uint32ToInt(a, b);
+			pregen = pregenUInt(b);
+			conv = offsetInt(a);
 			break;
 		}
 		case "int8":
 		{
-			conv = uint32ToInt(-0x80, 0x7F);
+			pregen = pregenUInt(0xFF);
+			conv = offsetInt(-0x80);
 			break;
 		}
 		case "int16":
 		{
-			conv = uint32ToInt(-0x8000, 0x7FFF);
+			pregen = pregenUInt(0xFFFF);
+			conv = offsetInt(-0x8000);
 			break;
 		}
 		case "int32":
 		{
-			conv = uint32ToInt(-0x80000000, 0x7FFFFFFF);
+			conv = offsetInt(-0x80000000);
 			break;
 		}
 		case "uint8":
 		{
-			conv = uint32ToInt(0, 0xFF);
+			pregen = pregenUInt(0, 0xFF);
 			break;
 		}
 		case "uint16":
 		{
-			conv = uint32ToInt(0, 0xFFFF);
+			pregen = pregenUInt(0, 0xFFFF);
 			break;
 		}
 		case "uint32":
 		{
-			conv = uint32ToInt(0, 0xFFFFFFFF);
 			break;
 		}
 		case "number":
@@ -169,21 +191,21 @@ function generationSettingsOf(arb){
 		case "elements":
 		{
 			const elements = ident.args[0];
-			const toLimit = uint32ToInt(0, elements.length - 1);
-			conv = (intval)=>(elements[toLimit(intval)]);
+			pregen = pregenUInt(elements.length - 1)
+			conv = (intval)=>(elements[intval]);
 			break;
 		}
 		case "bool":
 		{
-			pregen = ()=>(randomUInt(0,1));
+			pregen = pregenUInt(1);
 			conv = (intval)=>(!!intval);
 			break;
 		}
 		case "falsy":{
 			const elements = [false, null, undefined, "", 0, NaN];
 
-			const toLimit = uint32ToInt(0, 5);
-			conv = (intval)=>(elements[toLimit(intval)]);
+			pregen = pregenUInt(5);
+			conv = (intval)=>(elements[intval]);
 
 			break;
 		}
@@ -206,8 +228,8 @@ function generationSettingsOf(arb){
 				a = 1416499879495; //jsverify legacy
 				b = 1416499879495+768000000; //jsverify legacy
 			}
-			const toLimit = uint32ToInt(a, b);
-			conv = (intval)=>(new Date(toLimit(intval)));
+			pregen = pregenUInt(b);
+			conv = (intval)=>(new Date(intval+a));
 			break;
 		}
 
@@ -227,5 +249,6 @@ module.exports = {
 	wrap:wrapArbitrary,
 	libwrap:wrapSelf,
 	identOf,
-	generationSettingsOf
+	generationSettingsOf,
+	extendWithDefault
 };

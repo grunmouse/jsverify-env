@@ -83,15 +83,15 @@ describe('identOf', ()=>{
 		});
 	});
 	
-	"uint52,close,open,openbottom".split(',').forEach((name)=>{
+	"i_i,o_o,o_i,i_o".split(',').forEach((name)=>{
 		it(name, ()=>{
 			let ident = identOf(prim[name]);
-			assert.equal(ident.name, name);
+			assert.ok(ident.pregen && ident.conv);
 		});
 		it(name+'()', ()=>{
 			let arb = wrap(prim[name])(1);
 			let ident = identOf(arb);
-			assert.equal(ident.name, name);
+			assert.ok(ident.pregen && ident.conv);
 		});
 		
 	});
@@ -105,7 +105,7 @@ describe('generationSettingsOf', ()=>{
 		let arb = wrap(jsc.integer)(a,b);
 		let settings = generationSettingsOf(arb);
 		
-		return settings.a === a && settings.b === b && settings.conv(i) === i;
+		return settings.conv(i) === i+a;
 	});
 	
 	jsc.property('w jsc.number()', 'nat', 'nat', (a, b)=>{
@@ -118,8 +118,7 @@ describe('generationSettingsOf', ()=>{
 		
 		let arb = wrap(jsc.number)(a,b);
 		let settings = generationSettingsOf(arb);
-		console.log(a, b);
-		console.log(settings.conv(1)-b);
-		return settings.a === 0 && settings.b === 0xFFFFFFFF && settings.conv(0)===a && settings.conv(1)===b;
+
+		return settings.conv(0x100000000) === b && settings.conv(0) === a;
 	});
 });

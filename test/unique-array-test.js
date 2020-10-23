@@ -5,13 +5,14 @@ const {wrap} = require('../arb-utils.js');
 
 
 const {
-	uarray
+	uarray,
+	szarray
 } = require('../arrays.js');
 
-const env = {w:wrap, uarray};
+const env = {w:wrap, uarray, szarray};
 
 describe('uarray', ()=>{
-	jsc.property('with number', uarray(2, jsc.nat), (arr)=>{
+	jsc.property('with number', uarray(2, wrap(jsc.nat)(5)), (arr)=>{
 		let s = new Set(arr);
 		return arr.length === 2 && s.size == arr.length;
 	});
@@ -30,4 +31,13 @@ describe('uarray', ()=>{
 		let s = new Set(arr);
 		return arr.length === 5 && s.size == arr.length;
 	});
+
+	jsc.property('unique arrays of arrays', 'uarray 5 (szarray 3 (w nat))', env, (arr)=>{
+		let keys = arr.map((values)=>(values.reduce((akk, x)=>((akk<<32n) | BigInt(x)), 0n)));
+		let s = new Set(keys);
+		//console.log(arr);
+		return arr.length === 5 && s.size == arr.length;
+	});
+	
+	
 });

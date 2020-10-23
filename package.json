@@ -8,11 +8,13 @@
   },
   "author": "",
   "license": "ISC",
-  "engines":{
-	"nodev": ">=12.14.0"
+  "engines": {
+    "nodev": ">=12.14.0"
   },
   "dependencies": {
+    "fast-check": "^2.6.0",
     "jsverify": "^0.8.4",
+    "littlelisp": "github:jxav/littlelisp",
     "typify-parser": "^1.1.0",
     "underscore": "^1.11.0"
   },

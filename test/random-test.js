@@ -4,67 +4,11 @@ const jsc = require('jsverify');
 
 
 const random = require('../random.js');
+const convert = require('../convert-value.js');
+const {uniqueRandom} = require('../unique-random.js');
+
 
 describe('random', ()=>{
-	describe('integer', ()=>{
-		
-		jsc.property('without argument', 'nat', ()=>{
-			const spy = sinon.spy(jsc.random, 'integer');
-			spy.resetHistory();
-			let r = random.integer();
-			
-			let calls = spy.getCalls();
-			
-			assert.ok(calls.length>0);
-			calls.forEach((c)=>{
-				assert.deepEqual(c.args, [0, 0xFFFFFFFF]);
-			});
-			spy.resetHistory();
-			
-			spy.restore();
-			return true;
-		});
-		
-		jsc.property('with one argument', '(integer 10 1000)', (b)=>{
-			const spy = sinon.spy(jsc.random, 'integer');
-			spy.resetHistory();
-			let r = random.integer(b);
-			
-			let calls = spy.getCalls();
-			
-			assert.ok(calls.length>0);
-			calls.forEach((c)=>{
-				assert.deepEqual(c.args, [0, b]);
-			});
-			spy.resetHistory();
-			
-			spy.restore();
-			return true;
-		});
-
-		jsc.property('with two argument', 'integer 0 1000', 'integer 1 5000', (a, b)=>{
-			const spy = sinon.spy(jsc.random, 'integer');
-			spy.resetHistory();
-			
-			if(a>b){
-				[a,b] = [b,a];
-			}
-			
-			let r = random.integer(a, b);
-			
-			
-			let calls = spy.getCalls();
-			
-			assert.ok(calls.length>0);
-			calls.forEach((c)=>{
-				assert.deepEqual(c.args, [a, b]);
-			});
-			spy.resetHistory();
-			
-			spy.restore();
-			return true;
-		});
-	});
 	
 	describe('randomUInt32', ()=>{
 		jsc.property('without argument', 'nat', ()=>{
@@ -109,22 +53,22 @@ describe('random', ()=>{
 	
 	describe('uint32ToFloat', ()=>{
 		it('[0,1)', ()=>{
-			const conv = random.uint32ToFloat(false, true);
+			const conv = convert.uint32ToFloat(false, true);
 			assert.ok(conv(0) === 0);
 			assert.ok(conv(0xFFFFFFFF) < 1);
 		});
 		it('(0,1)', ()=>{
-			const conv = random.uint32ToFloat(true, true);
+			const conv = convert.uint32ToFloat(true, true);
 			assert.ok(conv(0) > 0);
 			assert.ok(conv(0xFFFFFFFF) < 1);
 		});
 		it('(0,1]', ()=>{
-			const conv = random.uint32ToFloat(true, false);
+			const conv = convert.uint32ToFloat(true, false);
 			assert.ok(conv(0) > 0);
 			assert.ok(conv(0xFFFFFFFF) === 1);
 		});
 		it('[0,1]', ()=>{
-			const conv = random.uint32ToFloat(false, false);
+			const conv = convert.uint32ToFloat(false, false);
 			assert.ok(conv(0) === 0);
 			assert.ok(conv(0xFFFFFFFF) === 1);
 		});
@@ -141,13 +85,13 @@ describe('random', ()=>{
 				b *= 2;
 			}
 			
-			const conv = random.expandFloat(a, b);
+			const conv = convert.expandFloat(a, b);
 			
 			return conv(0)=== a && conv(1) === b;
 		});
 	});
 	
-	describe('uniqueRandomInt', ()=>{
+	describe('uniqueRandom', ()=>{
 		jsc.property('generate', 'integer 10 1000', 'nat', 'nat', (n, a, b)=>{
 			if(a>b){
 				[a,b] = [b,a];
@@ -156,7 +100,7 @@ describe('random', ()=>{
 				b += 2*n;
 			}
 			
-			let arr = random.uniqueRandomInt(n, a, b);
+			let arr = uniqueRandom(n, random.pregenUInt(b));
 			
 			assert.equal(arr.length, n, 'length');
 			

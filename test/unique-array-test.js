@@ -1,13 +1,13 @@
 const assert = require('assert');
 const jsc = require('jsverify');
 
-const {wrap} = require('../arb-utils.js');
+const {wrap} = require('../arbitrary/arb-utils.js');
 
 
 const {
 	uarray,
 	szarray
-} = require('../arrays.js');
+} = require('../arbitrary/arrays.js');
 
 const env = {w:wrap, uarray, szarray};
 

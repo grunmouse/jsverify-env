@@ -69,13 +69,18 @@ function expandFloat(a, b){
 }
 
 function offsetInt(offset){
-	offser = Number(offset);
+	offset = Number(offset);
 	return (value)=>(Number(value)+offset);
 }
 
 function offsetBigInt(offset){
-	offser = BigInt(offset);
+	offset = BigInt(offset);
 	return (value)=>(BigInt(value)+offset);
+}
+
+function offsetValue(offset, T){
+	offset = T(offset);
+	return (value)=>(T(value)+offset);
 }
 
 module.exports = {
@@ -83,6 +88,7 @@ module.exports = {
 	expandFloat,
 	offsetInt,
 	offsetBigInt,
+	offsetValue,
 	
 	ensureIntegerArgs,
 	ensureFloatArgs,

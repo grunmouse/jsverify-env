@@ -19,8 +19,6 @@ const random = jsc.random;
 
 const biginteger = (b)=>(BigInt(random.integer(0,Number(b))));
 
-const randomUInt32 = ()=>(random.integer(0, MASK32));
-
 function randomUInt(b){
 	
 	b = b || MASK32;
@@ -50,18 +48,36 @@ function randomBigUInt(b){
 }
 
 
-const randomUInt52 = ()=>(Number((biginteger(MASK20)<<32n)|biginteger(MASK32)));
-const randomBigUInt64 = ()=>((biginteger(MASK32)<<32n)|biginteger(MASK32));
 
-const randomBigUInt32 = ()=>(BigInt(randomUInt32()));
+/**
+ * @typedef Pregen<T> : Function<(min=0, [size])=>(T)> - Функция генерации дискретных случайных значений
+ * @property limit : T - признак, что функция возвращает BigInt
+ * @property bigint? : Boolean = T===BigInt - признак, что функция возвращает BigInt
+ * @param min : T - минимальное генерируемое значение значение
+ * @param size? : Number - необязательный параметр генерации, может использоваться в jsverify
+ * @return T - сгенерированное случайное значение в диапазоне [min; limit] & Z
+ *
+ * 
+ */
 
+/**
+ * @function pregenUInt
+ * @param b? : Int32
+ * @return Pregen<Int32>{limit = b}
+ */
 function pregenUInt(b=MASK32){
 	const pregen = (a=0)=>(randomUInt(b-a)+a);
 	pregen.limit = b;
+	pregen.T = Number;
 	
 	return pregen;
 }
 
+/**
+ * @function pregenBigUInt
+ * @param b : Int32|BigInt
+ * @return Pregen<BigInt>{limit = b}
+ */
 function pregenBigUInt(b){
 	b = BigInt(b);
 	const pregen = (a=0n)=>{
@@ -69,18 +85,13 @@ function pregenBigUInt(b){
 		return randomBigUInt(b-a)+a;
 	};
 	pregen.limit = b;
+	pregen.T = BigInt;
 	pregen.bigint = true;
 	return pregen;
 }
 
 module.exports = {
 	randomUInt,
-	randomUInt32,
-	randomUInt52,
-	
-	randomBigUInt32,
-	randomBigUInt64,
-	
 	randomBigUInt,
 	
 	pregenUInt,

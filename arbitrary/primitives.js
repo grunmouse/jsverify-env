@@ -1,6 +1,6 @@
 const jsc = require('jsverify');
-const random = require('./random.js');
-const convert = require('./convert-value.js');
+const random = require('../random/random.js');
+const convert = require('../convert/convert-value.js');
 const {libwrap, extendWithDefault} = require('./arb-utils.js');
 
 const combine = (a, b)=>((x)=>(b(a(x))));
@@ -10,7 +10,7 @@ const bless = require('./bless.js');
 const integer = (minsize, maxsize)=>{
 	[minsize, maxsize] = convert.ensureIntegerArgs(minsize, maxsize);
 	const pregen = random.pregenUInt(maxsize-minsize);
-	const conv = convert.offsetInt(minsize);
+	const conv = convert.offsetValue(minsize, pregen.T);
 	
 	return bless({
 		pregen,

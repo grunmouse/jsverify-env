@@ -5,7 +5,7 @@ const jsc = require('jsverify');
 
 const {
 	szarray
-} = require('../arrays.js');
+} = require('../arbitrary/arrays.js');
 const preparedForAll = require('../variables.js');
 
 

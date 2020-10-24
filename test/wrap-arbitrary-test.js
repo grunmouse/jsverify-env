@@ -1,6 +1,6 @@
 var jsc = require("jsverify");
 var assert = require("assert");
-const {wrap} = require('../arb-utils.js');
+const {wrap} = require('../arbitrary/arb-utils.js');
 
 const env = {w:wrap};
 

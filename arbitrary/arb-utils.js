@@ -1,18 +1,15 @@
 const {
-	randomUInt32,
-	randomUInt,
 	pregenUInt
-} = require('./random.js');
+} = require('../random/random.js');
 
 const {
 	ensureIntegerArgs,
 	ensureFloatArgs,
-	ensureFloatLim,
 	
 	expandFloat,
 	uint32ToFloat,
 	offsetInt
-} = require('./convert-value.js');
+} = require('../convert/convert-value.js');
 
 const jsc = require('jsverify');
 

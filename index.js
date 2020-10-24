@@ -2,23 +2,19 @@ const jsc = require('jsverify');
 
 const prepForAll = require('./variables.js');
 
-const {
-	szarray,
-	uarray,
-	incarray,
-	decarray,
-	nincarray,
-	ndecarray
-} = require('./arrays.js');
+const env = require('./arbitrary/environment.js');
 
-const utils = jsc.utils.merge(
-	require('./arb-utils.js'),
-	require('./array-utils.js')
-);
+const convert = require('./convert/index.js');
+const random = require('./random/index.js');
+
+const bless = require('./arbitrary/bless.js');
 
 module.exports = {
 	prepForAll,
 	
-	utils:jsc.utils.merge(utils),
-	szarray
+	convert,
+	random,
+	
+	env,
+	bless
 };

@@ -2,7 +2,7 @@ const assert = require('assert');
 const jsc = require('jsverify');
 const {
 	szarray
-} = require('../arrays.js');
+} = require('../arbitrary/arrays.js');
 
 describe('szarray', ()=>{
 	jsc.property('with number', szarray(2, jsc.nat), (arr)=>{

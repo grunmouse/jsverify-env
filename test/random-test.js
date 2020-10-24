@@ -3,53 +3,12 @@ const sinon = require('sinon');
 const jsc = require('jsverify');
 
 
-const random = require('../random.js');
-const convert = require('../convert-value.js');
-const {uniqueRandom} = require('../unique-random.js');
+const random = require('../random/random.js');
+const convert = require('../convert/convert-value.js');
+const {uniqueRandom} = require('../random/unique-random.js');
 
 
 describe('random', ()=>{
-	
-	describe('randomUInt32', ()=>{
-		jsc.property('without argument', 'nat', ()=>{
-			const spy = sinon.spy(jsc.random, 'integer');
-			spy.resetHistory();
-			let r = random.randomUInt32();
-			
-			let calls = spy.getCalls();
-			
-			assert.ok(calls.length>0);
-			calls.forEach((c)=>{
-				assert.deepEqual(c.args, [0, 0xFFFFFFFF]);
-			});
-			spy.resetHistory();
-			
-			spy.restore();
-			return true;
-		});
-		
-	});		
-	
-
-	describe('randomUInt52', ()=>{
-		jsc.property('without argument', 'nat', ()=>{
-			const spy = sinon.spy(jsc.random, 'integer');
-			spy.resetHistory();
-			let r = random.randomUInt52();
-			
-			let calls = spy.getCalls();
-			
-			assert.ok(calls.length == 2);
-			let str = (calls[0].args[1].toString(16) + calls[1].args[1].toString(16));
-
-			assert.equal(str.length, 52/4);
-
-			spy.resetHistory();
-			
-			spy.restore();
-			return true;
-		});
-	});
 	
 	describe('uint32ToFloat', ()=>{
 		it('[0,1)', ()=>{

@@ -1,37 +1,32 @@
 const jsc = require("jsverify");
 const {
 	transposeArrays,
-	repeateItems
-} = require('./array-utils.js');
+	repeateItems,
+	
+	increasingSorter,
+	decreasingSorter	
+} = require('../convert/array-utils.js');
 const {
 	identOf,
 	generationSettingsOf
 } = require('./arb-utils.js');
 
 const {
-	uint32ToFloat,
-	expandFloat,
-	
-	ensureIntegerArgs,
-	ensureFloatArgs,
-	
-	randomUInt,
 	
 	pregenUInt,
 	pregenBigUInt
 	
-} = require('./random.js');
+} = require('../random/random.js');
 
 const {
-	uniqueRandomInt,
 	uniqueRandom
-} = require('./unique-random.js');
+} = require('../random/unique-random.js');
+
+const prim = require('./primitives.js');
+
 
 const bless = require('./bless.js');
 
-
-const increasingSorter = (a,b)=>(+(b>a)-(a>b));
-const decreasingSorter = (a,b)=>(+(b<a)-(a<b));
 const same = (x)=>(x);
 
 const sizedArray = (len, arb)=>{
@@ -47,7 +42,7 @@ const sizedArray = (len, arb)=>{
 	let res = {};
 	if(typeof len === 'number' && sett.pregen){
 		let valueSize = BigInt(sett.pregen.limit)+1n;
-		let limit = valueSize ** BigInt(len) - 1n;;
+		let limit = valueSize ** BigInt(len) - 1n;
 		//console.log(limit);
 		const itemConv = sett.pregen.bigint ? sett.conv : (x)=>sett.conv(Number(x));
 		
@@ -138,10 +133,8 @@ const nondecreasingArray = (len, arb)=>{
 
 
 module.exports = {
-	utils:{
-		transposeArrays,
-		repeateItems
-	},
+	array: sizedArray,
+	nearray: (arb)=>(sizedArray(prim.posit(), arb)),
 	szarray: sizedArray,
 	uarray: uniqueArray,
 	incarray: increasingArray,

@@ -1,11 +1,11 @@
 const assert = require("assert");
 const jsc = require("jsverify");
-const prim = require('../new-primitives.js');
+const prim = require('../arbitrary/primitives.js');
 const {
 	wrap,
 	identOf,
 	generationSettingsOf
-} = require('../arb-utils.js');
+} = require('../arbitrary/arb-utils.js');
 
 const env = {w:wrap};
 

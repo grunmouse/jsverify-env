@@ -43,7 +43,7 @@ const sizedArray = (len, arb)=>{
 	if(typeof len === 'number' && sett.pregen){
 		let valueSize = BigInt(sett.pregen.limit)+1n;
 		let limit = valueSize ** BigInt(len) - 1n;
-		//console.log(limit);
+
 		const itemConv = sett.pregen.bigint ? sett.conv : (x)=>sett.conv(Number(x));
 		
 		res.pregen = pregenBigUInt(limit);

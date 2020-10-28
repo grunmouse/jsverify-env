@@ -29,7 +29,7 @@ extendWithDefault(posit);
 const limfloat = (opendown, openup)=>{
 	const toFloat = convert.uint32ToFloat(opendown, openup);
 	
-	const pregen = random.pregenBigUInt(0xFFFFFFFF);
+	const pregen = random.pregenUInt(0xFFFFFFFF);
 	
 	const getSettings = (minsize, maxsize)=>(
 		{

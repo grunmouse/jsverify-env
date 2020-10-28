@@ -32,7 +32,7 @@ function smap(f, g, newShow){
 
 function bless(arb){
 
-	if(arb.pregen && arb.conv){
+	if(!arb.generator && arb.pregen && arb.conv){
 		arb.generator = function(size){
 			return arb.conv(arb.pregen(0, size), size);
 		};

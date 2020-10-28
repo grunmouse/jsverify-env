@@ -47,11 +47,16 @@ function randomBigUInt(b){
 	return value % b;
 }
 
+function randomBool(tr, of){
+	return random.integer(0, of)<tr;
+}
 
 
 /**
  * @typedef Pregen<T> : Function<(min=0, [size])=>(T)> - Функция генерации дискретных случайных значений
- * @property limit : T - признак, что функция возвращает BigInt
+ * @property T : Function - конструктор используемого типа данных - Number или BigInt
+ * @property limit : T - максимальное генерируемое значение
+ * @property count : T - число возможных значений count = limit+1
  * @property bigint? : Boolean = T===BigInt - признак, что функция возвращает BigInt
  * @param min : T - минимальное генерируемое значение значение
  * @param size? : Number - необязательный параметр генерации, может использоваться в jsverify
@@ -68,6 +73,7 @@ function randomBigUInt(b){
 function pregenUInt(b=MASK32){
 	const pregen = (a=0)=>(randomUInt(b-a)+a);
 	pregen.limit = b;
+	pregen.count = b+1;
 	pregen.T = Number;
 	
 	return pregen;
@@ -85,6 +91,7 @@ function pregenBigUInt(b){
 		return randomBigUInt(b-a)+a;
 	};
 	pregen.limit = b;
+	pregen.count = b+1n;
 	pregen.T = BigInt;
 	pregen.bigint = true;
 	return pregen;
@@ -93,6 +100,7 @@ function pregenBigUInt(b){
 module.exports = {
 	randomUInt,
 	randomBigUInt,
+	randomBool,
 	
 	pregenUInt,
 	pregenBigUInt

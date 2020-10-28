@@ -1,7 +1,6 @@
 dependencies:
   fast-check: 2.6.0
   jsverify: 0.8.4
-  littlelisp: github.com/jxav/littlelisp/cee921bc787580efc02f11d7baf342bbb1c99733
   typify-parser: 1.1.0
   underscore: 1.11.0
 devDependencies:
@@ -154,17 +153,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-xY96SsN3NA461qIRKZ/+qox37YXPtSBswMGfiNptr+wrt6ds4HaMw23TP612fEyGekRE6LNRiLYr/aqbHXNedw==
-  github.com/jxav/littlelisp/cee921bc787580efc02f11d7baf342bbb1c99733:
-    dev: false
-    name: littlelisp
-    resolution:
-      tarball: 'https://codeload.github.com/jxav/littlelisp/tar.gz/cee921bc787580efc02f11d7baf342bbb1c99733'
-    version: 0.1.0
 specifiers:
   fast-check: ^2.6.0
   jsverify: ^0.8.4
   lazy-seq: ^1.0.0
-  littlelisp: 'github:jxav/littlelisp'
   sinon: ^9.2.0
   trampa: ^1.0.1
   typify-parser: ^1.1.0

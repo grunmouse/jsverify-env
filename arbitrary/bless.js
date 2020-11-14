@@ -16,9 +16,13 @@ function extendWithDefault(arb) {
 function smap(f, g, newShow){
   var arb = this;
   let res = {
-    shrink: arb.shrink.smap(f, g),
     show: newShow || jsc.show.def
   };
+  
+  if(g){
+	res.shrink = arb.shrink.smap(f, g);
+  }
+  
   if(arb.pregen && arb.conv){
 	res.pregen = arb.pregen;
 	res.conv = (raw)=>(f(arb.conv(raw)));
@@ -31,6 +35,9 @@ function smap(f, g, newShow){
 }
 
 function bless(arb){
+	if(typeof arb === 'function'){
+		arb = {generator:arb};
+	}
 
 	if(!arb.generator && arb.pregen && arb.conv){
 		arb.generator = function(size){

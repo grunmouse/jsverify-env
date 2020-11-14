@@ -93,9 +93,9 @@ const uniqueArray = (len, arb)=>{
 		arb = len;
 		len = jsc.nat;
 	}
-	//arb = jsc.utils.force(arb);
-	//console.log(arb);
+
 	const {pregen, conv} = generationSettingsOf(arb);
+
 	if(!pregen || !conv){
 		throw new Error('Arbitrary ' + arb + ' does not support to uniquely!');
 	}
@@ -103,6 +103,7 @@ const uniqueArray = (len, arb)=>{
 	let res = bless({
 		generator:(size)=>{
 			let l = typeof len === 'number' ? len : len.generator(size);
+			
 			let values = uniqueRandom(l, pregen);
 			
 			let result = values.map(conv);
@@ -116,7 +117,10 @@ const uniqueArray = (len, arb)=>{
 
 
 const increasingArray = (len, arb)=>{
-	return uniqueArray(len, arb).smap((arr)=>(arr.sort(increasingSorter)), same);
+	return uniqueArray(len, arb).smap((arr)=>{
+		arr.sort(increasingSorter);
+		return arr;
+	}, same);
 };
 
 const decreasingArray = (len, arb)=>{

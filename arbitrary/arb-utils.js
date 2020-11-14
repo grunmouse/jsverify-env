@@ -143,7 +143,7 @@ function generationSettingsOf(arb){
 		{
 			let args = ensureIntegerArgs(...ident.args);
 			let [a, b] = args;
-			pregen = pregenUInt(b);
+			pregen = pregenUInt(b-a);
 			conv = offsetInt(a);
 			break;
 		}

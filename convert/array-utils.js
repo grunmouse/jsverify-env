@@ -1,6 +1,6 @@
 
-const increasingSorter = (a,b)=>(+(b>a)-(a>b));
-const decreasingSorter = (a,b)=>(+(b<a)-(a<b));
+const increasingSorter = (a,b)=>(+(b<a)-(a<b));
+const decreasingSorter = (a,b)=>(+(b>a)-(a>b));
 
 function makeSorterBy(fun, sorter){
 	return (a,b)=>sorter(fun(a),fun(b));

@@ -12,14 +12,9 @@
     "nodev": ">=12.14.0"
   },
   "dependencies": {
-    "fast-check": "^2.6.0",
-    "jsverify": "^0.8.4",
-    "typify-parser": "^1.1.0",
-    "underscore": "^1.11.0"
+    "jsverify": "^0.8.4"
   },
   "devDependencies": {
-    "lazy-seq": "^1.0.0",
-    "sinon": "^9.2.0",
-    "trampa": "^1.0.1"
+    "sinon": "^9.2.0"
   }
 }

@@ -1,12 +1,7 @@
 dependencies:
-  fast-check: 2.6.0
   jsverify: 0.8.4
-  typify-parser: 1.1.0
-  underscore: 1.11.0
 devDependencies:
-  lazy-seq: 1.0.0
   sinon: 9.2.0
-  trampa: 1.0.1
 lockfileVersion: 5.1
 packages:
   /@sinonjs/commons/1.8.1:
@@ -46,14 +41,6 @@ packages:
       node: '>=0.3.1'
     resolution:
       integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
-  /fast-check/2.6.0:
-    dependencies:
-      pure-rand: 3.1.0
-    dev: false
-    engines:
-      node: '>=8.0.0'
-    resolution:
-      integrity: sha512-Wpz0mMPGxvOtMBaEguu5Pw35uTVfJzAUqRYQksiHk6vHKBV2YNeKk9BzTuqVCYwUIl+NELyPBY2Mg96sYk2fhw==
   /has-flag/4.0.0:
     dev: true
     engines:
@@ -80,6 +67,7 @@ packages:
     resolution:
       integrity: sha512-aWgeGFW67BP3e5181Ep1Fv2v8z//iBJfrvyTnq8wG86vEESwmonn1zPBJ0VfmT9CJq2FIT0VsETtrNFm2a+SHA==
   /lazy-seq/1.0.0:
+    dev: false
     engines:
       node: '>= 0.10.0'
     resolution:
@@ -104,10 +92,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-n43JRhlUKUAlibEJhPeir1ncUID16QnEjNpwzNdO3Lm4ywrBpBZ5oLD0I6br9evr1Y9JTqwRtAh7JLoOzAQdVA==
-  /pure-rand/3.1.0:
-    dev: false
-    resolution:
-      integrity: sha512-xkCSMNjEnLG/A8iTH9M5ayXN4SCWRP+ih3rxi09Q7Fu0b9jAP6V9H59pOtcB37IsVt3eHxf1FMy9n7YrqdDdSA==
   /rc4/0.1.5:
     dev: false
     engines:
@@ -135,6 +119,7 @@ packages:
     resolution:
       integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==
   /trampa/1.0.1:
+    dev: false
     resolution:
       integrity: sha512-93WeyHNuRggPEsfCe+yHxCgM2s6H3Q8Wmlt6b6ObJL8qc7eZlRaFjQxwTrB+zbvGtlDRnAkMoYYo3+2uH/fEwA==
   /type-detect/4.0.8:
@@ -149,15 +134,6 @@ packages:
       node: '>= 0.10.0'
     resolution:
       integrity: sha1-rHO/pfJTQ0aOLQ8zRsYRe8A9PJk=
-  /underscore/1.11.0:
-    dev: false
-    resolution:
-      integrity: sha512-xY96SsN3NA461qIRKZ/+qox37YXPtSBswMGfiNptr+wrt6ds4HaMw23TP612fEyGekRE6LNRiLYr/aqbHXNedw==
 specifiers:
-  fast-check: ^2.6.0
   jsverify: ^0.8.4
-  lazy-seq: ^1.0.0
   sinon: ^9.2.0
-  trampa: ^1.0.1
-  typify-parser: ^1.1.0
-  underscore: ^1.11.0

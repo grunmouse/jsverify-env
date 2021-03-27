@@ -95,7 +95,7 @@ const uniqueArray = (len, arb)=>{
 	}
 
 	const {pregen, conv} = generationSettingsOf(arb);
-
+	
 	if(!pregen || !conv){
 		throw new Error('Arbitrary ' + arb + ' does not support to uniquely!');
 	}

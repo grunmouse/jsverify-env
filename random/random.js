@@ -17,14 +17,27 @@ const {
  */
 const random = jsc.random;
 
-const biginteger = (b)=>(BigInt(random.integer(0,Number(b))));
+function biginteger(b){
+	if(!b){
+		return 0;
+	}
+	return BigInt(random.integer(0,Number(b)));
+}
 
 function randomUInt(b){
+	if(!b){
+		return 0;
+	}
 	
 	b = b || MASK32;
 
 	return random.integer(0, b);
 }
+
+function randomBool(tr, of){
+	return random.integer(0, of)<tr;
+}
+
 
 function randomBigUIntBySize(len){
 	len = BigInt(len);
@@ -46,11 +59,6 @@ function randomBigUInt(b){
 	
 	return value % b;
 }
-
-function randomBool(tr, of){
-	return random.integer(0, of)<tr;
-}
-
 
 /**
  * @typedef Pregen<T> : Function<(min=0, [size])=>(T)> - Функция генерации дискретных случайных значений
@@ -100,6 +108,7 @@ function pregenBigUInt(b){
 module.exports = {
 	randomUInt,
 	randomBigUInt,
+	randomBigUIntBySize,
 	randomBool,
 	
 	pregenUInt,

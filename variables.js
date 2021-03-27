@@ -1,6 +1,10 @@
 const jsc = require('jsverify');
 
-
+/**
+ * @property prev {Object} - мапа значений, которые должны быть вычислены предварительно
+ * @property ...args - аргументы, как для jsc.property
+ * @returned property, совмкстимый с jsc
+ */
 function preparedForAll(prev, ...args){
 	let block = args.pop();
 	let env, gens;

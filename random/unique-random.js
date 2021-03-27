@@ -42,7 +42,8 @@ function uniqueRandom(n, gen){
 	let result = [];
 	for(let i = 0; i<n; ++i){
 		let k = gen(i);
-		result.push(tail.get(k));
+		let v = tail.get(k);
+		result.push(v);
 		let alt = gen.T(i);
 		tail.swap(k, alt);
 	}

@@ -2,7 +2,7 @@ const jsc = require('jsverify');
 const random = require('../random/random.js');
 const convert = require('../convert/convert-value.js');
 const {libwrap, extendWithDefault} = require('./arb-utils.js');
-
+const MASK32 = 0xFFFFFFFF;
 const combine = (a, b)=>((x)=>(b(a(x))));
 
 const bless = require('./bless.js');
@@ -18,8 +18,8 @@ const integer = (minsize, maxsize)=>{
 	});
 }
 
-const uint = (maxsize)=>integer(0, maxsize);
-const posit = (maxsize)=>integer(1, maxsize);
+const uint = (maxsize=MASK32)=>integer(0, maxsize);
+const posit = (maxsize=MASK32)=>integer(1, maxsize);
 
 extendWithDefault(integer);
 extendWithDefault(uint);
@@ -29,7 +29,7 @@ extendWithDefault(posit);
 const limfloat = (opendown, openup)=>{
 	const toFloat = convert.uint32ToFloat(opendown, openup);
 	
-	const pregen = random.pregenUInt(0xFFFFFFFF);
+	const pregen = random.pregenUInt(MASK32);
 	
 	const getSettings = (minsize, maxsize)=>(
 		{
@@ -62,10 +62,10 @@ const i_o = limfloat(false, true);
 
 const ints = {};
 [8, 16, 32].forEach((size)=>{
-	let full = 1<<size;
+	let full = 2**size;
 	ints['uint' + size] = integer(0, full-1);
-	let half = full>>>1;
-	ints['int' + size] = integer(-(1<<half), (1<<half)-1);
+	let half = full/2;
+	ints['int' + size] = integer(-half, half-1);
 });
 
 const bool = bless({

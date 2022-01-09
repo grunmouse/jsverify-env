@@ -1,82 +1,87 @@
+lockfileVersion: 5.3
+
+specifiers:
+  jsverify: ^0.8.4
+  sinon: ^9.2.0
+
 dependencies:
   jsverify: 0.8.4
+
 devDependencies:
   sinon: 9.2.0
-lockfileVersion: 5.1
+
 packages:
+
   /@sinonjs/commons/1.8.1:
+    resolution: {integrity: sha512-892K+kWUUi3cl+LlqEWIDrhvLgdL79tECi8JZUyq6IviKy/DNhuzCRlbHUjxK89f4ypPMMaFnFuR9Ie6DoIMsw==}
     dependencies:
       type-detect: 4.0.8
     dev: true
-    resolution:
-      integrity: sha512-892K+kWUUi3cl+LlqEWIDrhvLgdL79tECi8JZUyq6IviKy/DNhuzCRlbHUjxK89f4ypPMMaFnFuR9Ie6DoIMsw==
+
   /@sinonjs/fake-timers/6.0.1:
+    resolution: {integrity: sha512-MZPUxrmFubI36XS1DI3qmI0YdN1gks62JtFZvxR67ljjSNCeK6U08Zx4msEWOXuofgqUt6zPHSi1H9fbjR/NRA==}
     dependencies:
       '@sinonjs/commons': 1.8.1
     dev: true
-    resolution:
-      integrity: sha512-MZPUxrmFubI36XS1DI3qmI0YdN1gks62JtFZvxR67ljjSNCeK6U08Zx4msEWOXuofgqUt6zPHSi1H9fbjR/NRA==
+
   /@sinonjs/formatio/5.0.1:
+    resolution: {integrity: sha512-KaiQ5pBf1MpS09MuA0kp6KBQt2JUOQycqVG1NZXvzeaXe5LGFqAKueIS0bw4w0P9r7KuBSVdUk5QjXsUdu2CxQ==}
     dependencies:
       '@sinonjs/commons': 1.8.1
       '@sinonjs/samsam': 5.2.0
     dev: true
-    resolution:
-      integrity: sha512-KaiQ5pBf1MpS09MuA0kp6KBQt2JUOQycqVG1NZXvzeaXe5LGFqAKueIS0bw4w0P9r7KuBSVdUk5QjXsUdu2CxQ==
+
   /@sinonjs/samsam/5.2.0:
+    resolution: {integrity: sha512-CaIcyX5cDsjcW/ab7HposFWzV1kC++4HNsfnEdFJa7cP1QIuILAKV+BgfeqRXhcnSAc76r/Rh/O5C+300BwUIw==}
     dependencies:
       '@sinonjs/commons': 1.8.1
       lodash.get: 4.4.2
       type-detect: 4.0.8
     dev: true
-    resolution:
-      integrity: sha512-CaIcyX5cDsjcW/ab7HposFWzV1kC++4HNsfnEdFJa7cP1QIuILAKV+BgfeqRXhcnSAc76r/Rh/O5C+300BwUIw==
+
   /@sinonjs/text-encoding/0.7.1:
+    resolution: {integrity: sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==}
     dev: true
-    resolution:
-      integrity: sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
+
   /diff/4.0.2:
+    resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
+    engines: {node: '>=0.3.1'}
     dev: true
-    engines:
-      node: '>=0.3.1'
-    resolution:
-      integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
+
   /has-flag/4.0.0:
+    resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
+    engines: {node: '>=8'}
     dev: true
-    engines:
-      node: '>=8'
-    resolution:
-      integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==
+
   /isarray/0.0.1:
+    resolution: {integrity: sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8=}
     dev: true
-    resolution:
-      integrity: sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8=
+
   /jsverify/0.8.4:
+    resolution: {integrity: sha512-nUG73Sfi8L4eOkc7pv9sflgAm43v+z6XMuePGVdRoBUxBLJiVcMcf3Xgc4h19eHHF3JwsaagOkUu825UnPBLJw==}
+    engines: {node: '>= 0.8.0'}
     dependencies:
       lazy-seq: 1.0.0
       rc4: 0.1.5
       trampa: 1.0.1
       typify-parser: 1.1.0
     dev: false
-    engines:
-      node: '>= 0.8.0'
-    resolution:
-      integrity: sha512-nUG73Sfi8L4eOkc7pv9sflgAm43v+z6XMuePGVdRoBUxBLJiVcMcf3Xgc4h19eHHF3JwsaagOkUu825UnPBLJw==
+
   /just-extend/4.1.1:
+    resolution: {integrity: sha512-aWgeGFW67BP3e5181Ep1Fv2v8z//iBJfrvyTnq8wG86vEESwmonn1zPBJ0VfmT9CJq2FIT0VsETtrNFm2a+SHA==}
     dev: true
-    resolution:
-      integrity: sha512-aWgeGFW67BP3e5181Ep1Fv2v8z//iBJfrvyTnq8wG86vEESwmonn1zPBJ0VfmT9CJq2FIT0VsETtrNFm2a+SHA==
+
   /lazy-seq/1.0.0:
+    resolution: {integrity: sha1-iAy4qrJWAmOC4C9T7AiWgqdMW2o=}
+    engines: {node: '>= 0.10.0'}
     dev: false
-    engines:
-      node: '>= 0.10.0'
-    resolution:
-      integrity: sha1-iAy4qrJWAmOC4C9T7AiWgqdMW2o=
+
   /lodash.get/4.4.2:
+    resolution: {integrity: sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=}
     dev: true
-    resolution:
-      integrity: sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
+
   /nise/4.0.4:
+    resolution: {integrity: sha512-bTTRUNlemx6deJa+ZyoCUTRvH3liK5+N6VQZ4NIw90AgDXY6iPnsqplNFf6STcj+ePk0H/xqxnP75Lr0J0Fq3A==}
     dependencies:
       '@sinonjs/commons': 1.8.1
       '@sinonjs/fake-timers': 6.0.1
@@ -84,21 +89,20 @@ packages:
       just-extend: 4.1.1
       path-to-regexp: 1.8.0
     dev: true
-    resolution:
-      integrity: sha512-bTTRUNlemx6deJa+ZyoCUTRvH3liK5+N6VQZ4NIw90AgDXY6iPnsqplNFf6STcj+ePk0H/xqxnP75Lr0J0Fq3A==
+
   /path-to-regexp/1.8.0:
+    resolution: {integrity: sha512-n43JRhlUKUAlibEJhPeir1ncUID16QnEjNpwzNdO3Lm4ywrBpBZ5oLD0I6br9evr1Y9JTqwRtAh7JLoOzAQdVA==}
     dependencies:
       isarray: 0.0.1
     dev: true
-    resolution:
-      integrity: sha512-n43JRhlUKUAlibEJhPeir1ncUID16QnEjNpwzNdO3Lm4ywrBpBZ5oLD0I6br9evr1Y9JTqwRtAh7JLoOzAQdVA==
+
   /rc4/0.1.5:
+    resolution: {integrity: sha1-CMbgSgFo9utiHCKrbLEVG9n0pk0=}
+    engines: {node: '>=0.10.0'}
     dev: false
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-CMbgSgFo9utiHCKrbLEVG9n0pk0=
+
   /sinon/9.2.0:
+    resolution: {integrity: sha512-eSNXz1XMcGEMHw08NJXSyTHIu6qTCOiN8x9ODACmZpNQpr0aXTBXBnI4xTzQzR+TEpOmLiKowGf9flCuKIzsbw==}
     dependencies:
       '@sinonjs/commons': 1.8.1
       '@sinonjs/fake-timers': 6.0.1
@@ -108,32 +112,24 @@ packages:
       nise: 4.0.4
       supports-color: 7.2.0
     dev: true
-    resolution:
-      integrity: sha512-eSNXz1XMcGEMHw08NJXSyTHIu6qTCOiN8x9ODACmZpNQpr0aXTBXBnI4xTzQzR+TEpOmLiKowGf9flCuKIzsbw==
+
   /supports-color/7.2.0:
+    resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
+    engines: {node: '>=8'}
     dependencies:
       has-flag: 4.0.0
     dev: true
-    engines:
-      node: '>=8'
-    resolution:
-      integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==
+
   /trampa/1.0.1:
+    resolution: {integrity: sha512-93WeyHNuRggPEsfCe+yHxCgM2s6H3Q8Wmlt6b6ObJL8qc7eZlRaFjQxwTrB+zbvGtlDRnAkMoYYo3+2uH/fEwA==}
     dev: false
-    resolution:
-      integrity: sha512-93WeyHNuRggPEsfCe+yHxCgM2s6H3Q8Wmlt6b6ObJL8qc7eZlRaFjQxwTrB+zbvGtlDRnAkMoYYo3+2uH/fEwA==
+
   /type-detect/4.0.8:
+    resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
+    engines: {node: '>=4'}
     dev: true
-    engines:
-      node: '>=4'
-    resolution:
-      integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
+
   /typify-parser/1.1.0:
+    resolution: {integrity: sha1-rHO/pfJTQ0aOLQ8zRsYRe8A9PJk=}
+    engines: {node: '>= 0.10.0'}
     dev: false
-    engines:
-      node: '>= 0.10.0'
-    resolution:
-      integrity: sha1-rHO/pfJTQ0aOLQ8zRsYRe8A9PJk=
-specifiers:
-  jsverify: ^0.8.4
-  sinon: ^9.2.0
